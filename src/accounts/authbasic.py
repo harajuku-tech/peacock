@@ -1,11 +1,18 @@
-'''
-PythonAuthenHandler   authbasic
-AuthType        Basic
-AuthName        "Ristricted Area"
-Require         valid-user
-Require     group hogegroup  
-PythonPath      "['/home/www/.ve/admin/src/authadmin']+sys.path"
-AuthBasicAuthoritative Off
+''' apache basic authentication handler
+
+provide script in django project like this::
+
+    #: - activate virtualenv
+    activate_this = '/home/hdknr/ve/paloma/bin/activate_this.py'
+    execfile(activate_this,dict(__file__ =activate_this))
+
+    #: - export symbol
+    from accounts.authbasic import groups_for_user,check_password,authenhandler,enable_django
+
+    #: - enable django 
+    import os
+    enable_django( os.path.dirname( os.path.abspath(__file__)))
+
 '''
 import os
 import sys
@@ -40,6 +47,19 @@ def handler(req):
     return apache.OK
 
 def authenhandler(req ):
+    ''' mod_pyton authentication handler
+
+    apache conf ::
+
+        PythonAuthenHandler   authbasic
+        AuthType        Basic
+        AuthName        "Ristricted Area"
+        Require         valid-user
+        Require     group hogegroup  
+        PythonPath      "['/home/www/.ve/admin/src/authadmin']+sys.path"
+        AuthBasicAuthoritative Off
+
+    '''
     pwd = req.get_basic_auth_pw()
     user = req.user
     groups= [ re.split('[\t\s]+',g)[1]  for g in req.requires() if g !="valid-user" ]
@@ -51,6 +71,21 @@ def authenhandler(req ):
 
 def check_password(environ, user, password):
     ''' mod-wsgi basic authentication handler
+
+    apache conf::
+
+        <Location /wsgi >
+        
+        AuthType Basic
+        AuthName "Mod-Wsgi Basic Authentication"
+        AuthBasicProvider wsgi
+        WSGIAuthUserScript /home/hdknr/ve/paloma/src/peacock/example/app/basicauth.py
+        WSGIAuthGroupScript /home/hdknr/ve/paloma/src/peacock/example/app/basicauth.py
+        Require valid-user
+        Require group hoge
+        
+        </Location>
+        
     '''
     return authuser(user,password)
 
