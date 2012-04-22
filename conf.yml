@@ -1,0 +1,9 @@
+project : peacock
+name    : hdknr
+profile : django_project 
+fullname : Hideki Nara
+mail_user : gmail
+mail_domain  : hdknr.com
+company :   Lafoglia,Inc
+year : 2012
+host: github.com
