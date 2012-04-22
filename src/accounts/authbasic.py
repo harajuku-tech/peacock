@@ -49,3 +49,26 @@ def authenhandler(req ):
             return apache.OK
     return apache.HTTP_UNAUTHORIZED
 
+def check_password(environ, user, password):
+    ''' mod-wsgi basic authentication handler
+    '''
+    return authuser(user,password)
+
+
+def groups_for_user(environ, user):
+    ''' mod-wsgi groups
+    '''
+    from django.contrib.auth.models import User
+    try:
+        return map(lambda g:g.name.encode('ascii') , User.objects.get(username=user).groups.all() )
+    except:
+        return [""]
+
+def get_realm_hash(environ, user, realm):
+    ''' mod-wsgi digest authentication handler
+
+    .. tod::
+        implement later. ( http://code.google.com/p/modwsgi/wiki/AccessControlMechanisms )
+    '''
+    return None
+
