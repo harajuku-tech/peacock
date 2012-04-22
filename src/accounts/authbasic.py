@@ -54,7 +54,6 @@ def check_password(environ, user, password):
     '''
     return authuser(user,password)
 
-
 def groups_for_user(environ, user):
     ''' mod-wsgi groups
     '''
